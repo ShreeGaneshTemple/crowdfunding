@@ -5,12 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>धन्यवाद</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Pacifico&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(135deg, #ffeb3b, #ff9800);
-      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #ffeb3b, #ff80ab, #80deea);
+      font-family: 'Roboto', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -31,49 +32,68 @@
       text-align: center;
       width: 90%;
       max-width: 550px;
-      border: 2px solid #ff9800;
-      border-left: 10px solid #ff5722;
+      border: 2px solid #26c6da;
+      border-left: 10px solid #00897b;
     }
 
     .thank-you-header {
-      font-size: 2.8rem;
+      font-family: 'Pacifico', cursive;
+      font-size: 3.5rem;
       font-weight: bold;
-      color: #e65100;
-      text-shadow: 2px 2px 10px rgba(255, 152, 0, 0.8);
-      margin-bottom: 30px;
+      color: #d81b60;
+      text-shadow: 3px 3px 10px rgba(255, 105, 135, 0.7);
+      margin-bottom: 20px;
+      line-height: 1.4;
     }
 
     .donation-info {
       margin: 20px 0;
       padding: 20px;
       border-radius: 15px;
-      background: #fff8e1;
+      background: #fce4ec;
       color: #4e342e;
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       font-weight: bold;
       text-align: left;
-      box-shadow: 0 5px 10px rgba(255, 152, 0, 0.2);
+      box-shadow: 0 5px 10px rgba(255, 105, 135, 0.3);
+      line-height: 1.7;
     }
 
-    .donation-info p {
-      margin: 10px 0;
+    .donation-info p strong {
+      color: #00897b;
+      font-family: 'Roboto', sans-serif;
     }
 
-    .donation-info .title {
-      color: #e65100;
+    .greeting-text {
       font-size: 1.8rem;
+      font-family: 'Pacifico', cursive;
       font-weight: bold;
+      color: #00796b;
+      margin-top: 15px;
+      font-style: italic;
+      text-shadow: 2px 2px 6px rgba(0, 121, 107, 0.5);
     }
 
-    .donation-info .bank-info {
+    /* New div styles for Name, Amount and Transaction ID */
+    .info-box {
+      background-color: #80deea;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 10px rgba(0, 121, 107, 0.4);
       font-size: 1.2rem;
-      color: #f57c00;
+      color: #004d40;
+      font-weight: 600;
+    }
+
+    .info-box p {
+      margin: 10px 0;
     }
 
     .share-icon {
       margin-top: 20px;
       font-size: 2.5rem;
-      color: #f57c00;
+      color: #26a69a;
       cursor: pointer;
       transition: transform 0.3s ease;
     }
@@ -84,7 +104,7 @@
 
     @media (max-width: 600px) {
       .donation-info {
-        font-size: 1.2rem;
+        font-size: 1.15rem;
         padding: 15px;
       }
 
@@ -100,28 +120,48 @@
       <i class="fas fa-heart"></i> धन्यवाद! <i class="fas fa-heart"></i>
     </div>
 
-    <div class="donation-info" id="donorInfo">
-      <p>धन्यवाद <strong id="donorName"></strong> जी!</p>
-<p>आपका दान: <strong id="donationAmount"></strong></p>
-<p>लेन-देन आईडी: <strong id="txnId"></strong></p>
+    <!-- Info Box for Name, Donation Amount, and Transaction ID -->
+    <div class="info-box">
+      <p><strong>नाम: </strong><span id="donorName">आपका नाम</span></p>
+      <p><strong>दान की राशि: </strong><span id="donationAmount">₹0</span></p>
+      <p><strong>लेन-देन आईडी: </strong><span id="txnId">N/A</span></p>
     </div>
 
-    <!-- सिर्फ Share Icon -->
+    <div class="donation-info" id="donorInfo">
+      <p>श्री गणेश देवता मंदिर प्रबंधन समिति आपका हृदय से आभार प्रकट करती है।</p>
+      <p class="greeting-text">आपका स्वागत है हमारे कार्यक्रम में: <strong>14 मई - 20 मई 2025</strong></p>
+      <p>कार्यक्रम: <strong>श्री रूद्र चंडी महायज्ञ</strong></p>
+      <p>स्थान: <strong>आरसेल-कुट्टी, जबड़ा, सिमरिया, चतरा, झारखंड</strong></p>
+    </div>
+
     <div class="share-icon" onclick="sharePage()">
       <i class="fas fa-share-alt"></i>
     </div>
   </div>
 
   <script>
-  const urlParams = new URLSearchParams(window.location.search);
-  const name = urlParams.get("name");
-  const amount = urlParams.get("amount");
-  const txn = urlParams.get("txn");
+    const urlParams = new URLSearchParams(window.location.search);
+    const name = urlParams.get("name");
+    const amount = urlParams.get("amount");
+    const txn = urlParams.get("txn");
 
-  document.getElementById("donorName").textContent = name;
-  document.getElementById("donationAmount").textContent = `₹${amount}`;
-  document.getElementById("txnId").textContent = txn;
-</script>
+    document.getElementById("donorName").textContent = name || "आप";
+    document.getElementById("donationAmount").textContent = amount || "0";
+    document.getElementById("txnId").textContent = txn || "N/A";
 
+    
+    function sharePage() {
+      const shareText = `${name} जी ने श्री गणेश देवता मंदिर हेतु ₹${amount} दान दिया। आप भी जुड़ें!`;
+      if (navigator.share) {
+        navigator.share({
+          title: 'दान और आमंत्रण',
+          text: shareText,
+          url: window.location.href
+        });
+      } else {
+        alert("Sharing supported नहीं है इस डिवाइस पर।");
+      }
+    }
+  </script>
 </body>
 </html>
