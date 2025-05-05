@@ -456,42 +456,74 @@ body {
     document.getElementById('daysLeft').textContent = diffDays;
   }
 
-  // Call the function when page loads
-  calculateDaysLeft();
+  let totalAmountRaised = parseInt(localStorage.getItem("totalAmountRaised")) || 0;
+  let totalTargetAmount = 250000;
+  let totalDonors = parseInt(localStorage.getItem("totalDonors")) || 0;
 
-  document.getElementById("donate-btn").addEventListener("click", function () {
-    const amount = document.getElementById("customAmount").value;
-    const name = document.getElementById("donorName").value;
+  function updateProgress() {
+    let progressPercentage = (totalAmountRaised / totalTargetAmount) * 100;
 
-    if (!amount || amount < 1) {
-      alert("कृपया मान्य राशि दर्ज करें।");
-      return;
+    const progressBar = document.getElementById('progressBar');
+    const progressAmount = document.getElementById('progressAmount');
+    const donorCount = document.getElementById('donorNumber');
+
+    if (progressBar) progressBar.style.width = `${progressPercentage}%`;
+    if (progressAmount) progressAmount.textContent = `₹${totalAmountRaised.toLocaleString()}`;
+    if (donorCount) donorCount.textContent = totalDonors;
+  }
+
+  // Initial update on page load
+  updateProgress();
+
+  // Setup donate button handler after DOM is ready
+  document.addEventListener("DOMContentLoaded", function () {
+    calculateDaysLeft();
+
+    const donateBtn = document.getElementById("donate-btn");
+    if (donateBtn) {
+      donateBtn.addEventListener("click", function () {
+        const amount = parseInt(document.getElementById("customAmount").value);
+        const name = document.getElementById("donorName").value;
+
+        if (!amount || amount < 1) {
+          alert("कृपया मान्य राशि दर्ज करें।");
+          return;
+        }
+
+        var options = {
+          key: "rzp_test_z8ywdL2wxflncA",
+          amount: amount * 100,
+          currency: "INR",
+          name: "दान अभियान",
+          description: "यज्ञ हेतु दान",
+          handler: function (response) {
+            // ✅ Update totals
+            totalAmountRaised += amount;
+            totalDonors += 1;
+
+            // ✅ Save to localStorage
+            localStorage.setItem("totalAmountRaised", totalAmountRaised);
+            localStorage.setItem("totalDonors", totalDonors);
+
+            // ✅ Update UI
+            updateProgress();
+
+            const transactionId = response.razorpay_payment_id;
+            window.location.href = `thankyou.html?name=${encodeURIComponent(name)}&amount=${amount}&txn=${transactionId}`;
+          },
+          prefill: {
+            name: name
+          },
+          theme: {
+            color: "#4caf50"
+          }
+        };
+
+        var rzp = new Razorpay(options);
+        rzp.open();
+      });
     }
-
-    var options = {
-      key: "rzp_test_z8ywdL2wxflncA", // Replace with your Razorpay test key
-      amount: amount * 100, // Amount in paisa
-      currency: "INR",
-      name: "दान अभियान",
-      description: "यज्ञ हेतु दान",
-      image: "https://santu21sahu.github.io/ganesh-temple/logo.png", // Optional logo
-      handler: function (response) {
-        // Payment successful callback
-        const transactionId = response.razorpay_payment_id;
-        window.location.href = `thankyou.html?name=${encodeURIComponent(name)}&amount=${amount}&txn=${transactionId}`;
-      },
-      prefill: {
-        name: name
-      },
-      theme: {
-        color: "#4caf50"
-      }
-    };
-
-    var rzp = new Razorpay(options);
-    rzp.open();
   });
-
 
 </script>
 </html>
