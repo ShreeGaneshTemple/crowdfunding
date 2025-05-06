@@ -95,6 +95,7 @@
       justify-content: center;
       gap: 20px;
       margin-top: 20px;
+      flex-wrap: wrap;
     }
 
     .icon {
@@ -135,11 +136,10 @@
         print-color-adjust: exact;
       }
 
-      .icon-bar, .share-icon {
+      .icon-bar {
         display: none;
       }
 
-      /* Hide everything outside the container */
       body > *:not(.container) {
         display: none;
       }
@@ -163,34 +163,39 @@
       <p>ईश्वर की कृपा से सजे इस दिव्य आयोजन में, आपका सपरिवार स्वागत है — कृपया पधारें और आशीर्वाद प्राप्त करें। </p>
       <p>तिथि: <strong>14 मई 2025 - 20 मई 2025</strong></p>
       <p>कार्यक्रम: <strong>श्री रूद्र चंडी महायज्ञ</strong></p>
-      <p>स्थान: <strong>आरसेल-कुट्टी, जबड़ा, सिमरिया, चतरा (झारखंड) </strong></p>
+      <p>स्थान: <strong>आरसेल-कुट्टी, जबड़ा, सिमरिया, चतरा (झारखंड)</strong></p>
     </div>
 
     <div class="icon-bar">
+      <!-- Home Icon -->
+      <a class="icon" href="https://shreeganeshtemple.github.io/crowdfunding/" title="Main Page">
+        <i class="fas fa-home"></i>
+      </a>
+
       <!-- Native Share -->
-      <div class="icon" onclick="shareNative()">
+      <div class="icon" onclick="shareNative()" title="Share">
         <i class="fas fa-share-alt"></i>
       </div>
 
       <!-- WhatsApp Share -->
-      <a class="icon" id="whatsappShare" target="_blank">
+      <a class="icon" id="whatsappShare" target="_blank" title="WhatsApp पर शेयर करें">
         <i class="fab fa-whatsapp"></i>
       </a>
 
       <!-- Facebook Share -->
-      <a class="icon" id="facebookShare" target="_blank">
+      <a class="icon" id="facebookShare" target="_blank" title="Facebook पर शेयर करें">
         <i class="fab fa-facebook"></i>
       </a>
 
-      <!-- Print Icon -->
-      <div class="icon" onclick="window.print()">
-        <i class="fas fa-print"></i>
+      <!-- Save as PDF -->
+      <div class="icon" onclick="window.print()" title="PDF के रूप में सेव करें">
+        <i class="fas fa-file-download"></i>
       </div>
     </div>
   </div>
 
   <script>
-    const homeUrl = "https://yourhomepage.com"; // ← यहाँ अपनी वेबसाइट का असली लिंक डालें
+    const homeUrl = "https://shreeganeshtemple.github.io/crowdfunding/"; // ← यहाँ अपनी वेबसाइट का असली लिंक डालें
 
     const urlParams = new URLSearchParams(window.location.search);
     const name = urlParams.get("name") || "आप";
