@@ -6,11 +6,6 @@
   <title>धन्यवाद</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Pacifico&display=swap" rel="stylesheet">
-
-  <!-- PDF Libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
   <style>
     body {
       margin: 0;
@@ -21,14 +16,6 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      animation: fadeIn 1s ease-in-out;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     .container {
@@ -45,12 +32,11 @@
 
     .thank-you-header {
       font-family: 'Pacifico', cursive;
-      font-size: 3.5rem;
+      font-size: 3rem;
       font-weight: bold;
       color: #d81b60;
       text-shadow: 3px 3px 10px rgba(255, 105, 135, 0.7);
       margin-bottom: 20px;
-      line-height: 1.4;
     }
 
     .donation-info {
@@ -59,25 +45,15 @@
       border-radius: 15px;
       background: #fce4ec;
       color: #4e342e;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       font-weight: bold;
       text-align: left;
       box-shadow: 0 5px 10px rgba(255, 105, 135, 0.3);
-      line-height: 1.7;
+      line-height: 1.6;
     }
 
     .donation-info p strong {
       color: #00897b;
-    }
-
-    .greeting-text {
-      font-size: 1.8rem;
-      font-family: 'Pacifico', cursive;
-      font-weight: bold;
-      color: #00796b;
-      margin-top: 15px;
-      font-style: italic;
-      text-shadow: 2px 2px 6px rgba(0, 121, 107, 0.5);
     }
 
     .info-box {
@@ -86,7 +62,7 @@
       margin-top: 20px;
       border-radius: 10px;
       box-shadow: 0 5px 10px rgba(0, 121, 107, 0.4);
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       color: #004d40;
       font-weight: 600;
     }
@@ -104,7 +80,7 @@
     }
 
     .icon {
-      font-size: 2.2rem;
+      font-size: 2rem;
       color: #26a69a;
       cursor: pointer;
       transition: transform 0.3s ease;
@@ -124,21 +100,17 @@
 
     @media (max-width: 600px) {
       .donation-info {
-        font-size: 1.15rem;
+        font-size: 1rem;
         padding: 15px;
       }
 
       .thank-you-header {
-        font-size: 2rem;
+        font-size: 2.2rem;
       }
     }
 
     @media print {
       .icon-bar {
-        display: none;
-      }
-
-      body > *:not(.container) {
         display: none;
       }
     }
@@ -147,7 +119,7 @@
 <body>
   <div class="container" id="pdf-content">
     <div class="thank-you-header">
-      <i class="fas fa-heart"></i> Thank You! <i class="fas fa-heart"></i>
+      <i class="fas fa-heart"></i> धन्यवाद! <i class="fas fa-heart"></i>
     </div>
 
     <div class="info-box">
@@ -158,10 +130,10 @@
     </div>
 
     <div class="donation-info">
-      <p>इस भव्य आयोजन में सपरिवार पधारें, संगीत और प्रवचन का आनंद लें, और मुफ्त भोजन एवं विश्राम का लाभ लें।</p>
+      <p>इस भव्य आयोजन में सपरिवार पधारें, संगीत और प्रवचन का आनंद लें, और मुफ्त भोजन एवं ठहरने का लाभ लें।</p>
       <p>तिथि: <strong>14 मई 2025 - 20 मई 2025</strong></p>
       <p>कार्यक्रम: <strong>श्री रूद्र चंडी महायज्ञ</strong></p>
-      <p>स्थान: <strong>आरसेल-कुट्टी, जबड़ा, सिमरिया, चतरा (झारखंड)।</strong></p>
+      <p>स्थान: <strong>आरसेल-कुट्टी, जबड़ा, सिमरिया, चतरा (झारखंड)</strong></p>
     </div>
 
     <div class="icon-bar">
@@ -174,15 +146,17 @@
       <a class="icon" id="facebookShare" target="_blank" title="Facebook पर शेयर करें">
         <i class="fab fa-facebook"></i>
       </a>
-      <div class="icon" onclick="downloadPDF()" title="PDF के रूप में डाउनलोड करें">
+      <div class="icon" onclick="downloadPDF()" title="PDF डाउनलोड करें">
         <i class="fas fa-file-download"></i>
       </div>
     </div>
   </div>
 
-  <script>
-    const homeUrl = "https://shreeganeshtemple.github.io/crowdfunding/";
+  <!-- JS libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
+  <script>
     const urlParams = new URLSearchParams(window.location.search);
     const name = urlParams.get("name") || "आप";
     const amount = urlParams.get("amount") || "0";
@@ -192,23 +166,49 @@
     document.getElementById("donationAmount").textContent = amount;
     document.getElementById("txnId").textContent = txn;
 
+    const homeUrl = "https://shreeganeshtemple.github.io/crowdfunding/";
     const message = encodeURIComponent(`${name} जी ने श्री रूद्र चंडी महायज्ञ के लिए ₹${amount} दान किया है। आप भी इस पुण्य कार्य से जुड़ें: ${homeUrl}`);
     document.getElementById("whatsappShare").href = `https://wa.me/?text=${message}`;
     document.getElementById("facebookShare").href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(homeUrl)}`;
 
-    // ✅ Reliable mobile-friendly PDF download
     function downloadPDF() {
       const { jsPDF } = window.jspdf;
       const element = document.getElementById("pdf-content");
 
+      // Capture the donor's name and current date for PDF file naming
+      const donorName = document.getElementById("donorName").textContent;
+      
+      // Get the current date in 'dd-mm-yyyy' format
+      const currentDate = new Date();
+      const day = String(currentDate.getDate()).padStart(2, '0');
+      const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+      const year = currentDate.getFullYear();
+      const formattedDate = `${day}-${month}-${year}`;
+
       html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
         const imgData = canvas.toDataURL("image/png");
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = (canvas.height * pageWidth) / canvas.width;
+        const pdf = new jsPDF('p', 'mm', [180, 211]); // Custom page size [width, height]
 
-        pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
-        pdf.save("thank-you.pdf");
+        const imgWidth = pdf.internal.pageSize.width;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width
+
+        // Resize image to fit into the page
+        if (imgHeight <= pdf.internal.pageSize.height) {
+          pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight); // Adding image with custom width and height
+        } else {
+          let heightLeft = imgHeight;
+          let position = 0;
+
+          while (heightLeft > 0) {
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pdf.internal.pageSize.height;
+            position -= pdf.internal.pageSize.height;
+            if (heightLeft > 0) pdf.addPage();
+          }
+        }
+
+        // Save the PDF with donor's name and date
+        pdf.save(`${donorName}-${formattedDate}-thank-you.pdf`);
       });
     }
   </script>
