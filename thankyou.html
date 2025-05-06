@@ -163,7 +163,7 @@
       <p>इस भव्य आयोजन में सपरिवार पधारें, संगीत और प्रवचन का आनंद लें, और मुफ्त भोजन और ठहरने का लाभ लें।</p>
       <p>तिथि: <strong>14 मई 2025 - 20 मई 2025</strong></p>
       <p>कार्यक्रम: <strong>श्री रूद्र चंडी महायज्ञ</strong></p>
-      <p>स्थान: <strong>आरसेल-कुट्टी, जबड़ा, सिमरिया, चतरा (झारखंड)</strong></p>
+      <p>स्थान: <strong>आरसेल-कुट्टी, जबड़ा, सिमरिया, चतरा (झारखंड)।</strong></p>
     </div>
 
     <div class="icon-bar">
@@ -202,21 +202,29 @@
     document.getElementById("txnId").textContent = txn;
 
     // WhatsApp और Facebook के लिए लिंक सेट करें
-    const message = encodeURIComponent(`${name} जी ने श्री गणेश देवता मंदिर के लिए ₹${amount} दान किया है। आप भी इस पुण्य कार्य से जुड़ें: ${homeUrl}`);
+    const message = encodeURIComponent(`${name} जी ने ी रूद्र चंडी महायज्ञ के लिए ₹${amount} दान किया है। आप भी इस पुण्य कार्य से जुड़ें: ${homeUrl}`);
     document.getElementById("whatsappShare").href = `https://wa.me/?text=${message}`;
     document.getElementById("facebookShare").href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(homeUrl)}`;
 
     // PDF डाउनलोड करने के लिए फ़ंक्शन
     function downloadPDF() {
-      const doc = new jsPDF();
-      doc.html(document.body, {
-        callback: function (doc) {
-          doc.save('thank-you.pdf');
-        },
-        x: 10,
-        y: 10
-      });
-    }
+  const doc = new jsPDF();
+  
+  // Set page margins if necessary
+  doc.setMargins(10, 10, 10); // Optional: Set left, top, and right margins
+
+  // Convert HTML to PDF
+  doc.html(document.body, {
+    callback: function (doc) {
+      // Save the PDF with a custom name
+      doc.save('thank-you.pdf');
+    },
+    x: 10, // X position for the content
+    y: 10, // Y position for the content
+    width: 180, // Optional: Set width for content to fit
+    windowWidth: 800, // Optional: Adjust to window width if needed
+  });
+}
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
