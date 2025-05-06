@@ -6,6 +6,11 @@
   <title>धन्यवाद</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Pacifico&display=swap" rel="stylesheet">
+
+  <!-- PDF Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <style>
     body {
       margin: 0;
@@ -128,14 +133,7 @@
       }
     }
 
-    /* Print-specific styles */
     @media print {
-      body {
-        background: linear-gradient(135deg, #ffeb3b, #ff80ab, #80deea) !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-
       .icon-bar {
         display: none;
       }
@@ -147,9 +145,9 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" id="pdf-content">
     <div class="thank-you-header">
-      <i class="fas fa-heart"></i> धन्यवाद! <i class="fas fa-heart"></i>
+      <i class="fas fa-heart"></i> Thank You! <i class="fas fa-heart"></i>
     </div>
 
     <div class="info-box">
@@ -160,29 +158,22 @@
     </div>
 
     <div class="donation-info">
-      <p>इस भव्य आयोजन में सपरिवार पधारें, संगीत और प्रवचन का आनंद लें, और मुफ्त भोजन और ठहरने का लाभ लें।</p>
+      <p>इस भव्य आयोजन में सपरिवार पधारें, संगीत और प्रवचन का आनंद लें, और मुफ्त भोजन एवं विश्राम का लाभ लें।</p>
       <p>तिथि: <strong>14 मई 2025 - 20 मई 2025</strong></p>
       <p>कार्यक्रम: <strong>श्री रूद्र चंडी महायज्ञ</strong></p>
       <p>स्थान: <strong>आरसेल-कुट्टी, जबड़ा, सिमरिया, चतरा (झारखंड)।</strong></p>
     </div>
 
     <div class="icon-bar">
-      <!-- Home Icon -->
       <a class="icon" href="https://shreeganeshtemple.github.io/crowdfunding/" title="Main Page">
         <i class="fas fa-home"></i>
       </a>
-
-      <!-- WhatsApp Share -->
       <a class="icon" id="whatsappShare" target="_blank" title="WhatsApp पर शेयर करें">
         <i class="fab fa-whatsapp"></i>
       </a>
-
-      <!-- Facebook Share -->
       <a class="icon" id="facebookShare" target="_blank" title="Facebook पर शेयर करें">
         <i class="fab fa-facebook"></i>
       </a>
-
-      <!-- Save as PDF -->
       <div class="icon" onclick="downloadPDF()" title="PDF के रूप में डाउनलोड करें">
         <i class="fas fa-file-download"></i>
       </div>
@@ -190,7 +181,7 @@
   </div>
 
   <script>
-    const homeUrl = "https://shreeganeshtemple.github.io/crowdfunding/"; // ← यहाँ अपनी वेबसाइट का असली लिंक डालें
+    const homeUrl = "https://shreeganeshtemple.github.io/crowdfunding/";
 
     const urlParams = new URLSearchParams(window.location.search);
     const name = urlParams.get("name") || "आप";
@@ -201,31 +192,25 @@
     document.getElementById("donationAmount").textContent = amount;
     document.getElementById("txnId").textContent = txn;
 
-    // WhatsApp और Facebook के लिए लिंक सेट करें
     const message = encodeURIComponent(`${name} जी ने श्री रूद्र चंडी महायज्ञ के लिए ₹${amount} दान किया है। आप भी इस पुण्य कार्य से जुड़ें: ${homeUrl}`);
     document.getElementById("whatsappShare").href = `https://wa.me/?text=${message}`;
     document.getElementById("facebookShare").href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(homeUrl)}`;
 
-    // PDF डाउनलोड करने के लिए फ़ंक्शन
+    // ✅ Reliable mobile-friendly PDF download
     function downloadPDF() {
-  const doc = new jsPDF();
-  
-  // Set page margins if necessary
-  doc.setMargins(10, 10, 10); // Optional: Set left, top, and right margins
+      const { jsPDF } = window.jspdf;
+      const element = document.getElementById("pdf-content");
 
-  // Convert HTML to PDF
-  doc.html(document.body, {
-    callback: function (doc) {
-      // Save the PDF with a custom name
-      doc.save('thank-you.pdf');
-    },
-    x: 10, // X position for the content
-    y: 10, // Y position for the content
-    width: 180, // Optional: Set width for content to fit
-    windowWidth: 800, // Optional: Adjust to window width if needed
-  });
-}
+      html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = (canvas.height * pageWidth) / canvas.width;
+
+        pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
+        pdf.save("thank-you.pdf");
+      });
+    }
   </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>
