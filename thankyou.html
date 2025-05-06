@@ -202,7 +202,7 @@
     document.getElementById("txnId").textContent = txn;
 
     // WhatsApp और Facebook के लिए लिंक सेट करें
-    const message = encodeURIComponent(`${name} जी ने ी रूद्र चंडी महायज्ञ के लिए ₹${amount} दान किया है। आप भी इस पुण्य कार्य से जुड़ें: ${homeUrl}`);
+    const message = encodeURIComponent(`${name} जी ने श्री रूद्र चंडी महायज्ञ के लिए ₹${amount} दान किया है। आप भी इस पुण्य कार्य से जुड़ें: ${homeUrl}`);
     document.getElementById("whatsappShare").href = `https://wa.me/?text=${message}`;
     document.getElementById("facebookShare").href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(homeUrl)}`;
 
