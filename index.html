@@ -413,7 +413,8 @@ body {
 </footer>
 </body>
 <script>
-  // Get references to the buttons, input field, and container
+  
+// Get references to the buttons, input field, and container
   const amountBtns = document.querySelectorAll('.amount-btn[data-amount]');
   const customAmountContainer = document.getElementById('customAmountContainer');
   const customAmountInput = document.getElementById('customAmount');
@@ -452,87 +453,85 @@ body {
     this.classList.add('active-btn');
   });
 
-  function calculateDaysLeft() {
-    const today = new Date();
-    const targetDate = new Date('2025-05-14'); // Target: 20 May 2025
+  // Firebase config, Razorpay JS को पहले ही लोड कर लें
 
-    // Difference in milliseconds
-    const diffTime = targetDate - today;
-
-    // Convert milliseconds to days
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    // Show result in the span
-    document.getElementById('daysLeft').textContent = diffDays;
-  }
-
-let totalAmountRaised = parseInt(localStorage.getItem("totalAmountRaised")) || 0;
-  let totalTargetAmount = 250000;
-  let totalDonors = parseInt(localStorage.getItem("totalDonors")) || 0;
-
-  function updateProgress() {
-    let progressPercentage = (totalAmountRaised / totalTargetAmount) * 100;
-
-    const progressBar = document.getElementById('progressBar');
-    const progressAmount = document.getElementById('progressAmount');
-    const donorCount = document.getElementById('donorNumber');
-
-    if (progressBar) progressBar.style.width = `${progressPercentage}%`;
-    if (progressAmount) progressAmount.textContent = `₹${totalAmountRaised.toLocaleString()}`;
-    if (donorCount) donorCount.textContent = totalDonors;
-  }
-
-  // Initial update on page load
-  updateProgress();
-
-  // Setup donate button handler after DOM is ready
-  document.addEventListener("DOMContentLoaded", function () {
-    calculateDaysLeft();
-
-    const donateBtn = document.getElementById("donate-btn");
-    if (donateBtn) {
-      donateBtn.addEventListener("click", function () {
-        const amount = parseInt(document.getElementById("customAmount").value);
-        const name = document.getElementById("donorName").value;
-
-        if (!amount || amount < 1) {
-          alert("कृपया मान्य राशि दर्ज करें।");
-          return;
-        }
-
-        var options = {
-          key: "rzp_test_z8ywdL2wxflncA",
-          amount: amount * 100,
-          currency: "INR",
-          name: "दान अभियान",
-          description: "यज्ञ हेतु दान",
-          handler: function (response) {
-            // ✅ Update totals
-            totalAmountRaised += amount;
-            totalDonors += 1;
-
-            // ✅ Save to localStorage
-            localStorage.setItem("totalAmountRaised", totalAmountRaised);
-            localStorage.setItem("totalDonors", totalDonors);
-
-            // ✅ Update UI
-            updateProgress();
-
-            const transactionId = response.razorpay_payment_id;
-            window.location.href = `thankyou.html?name=${encodeURIComponent(name)}&amount=${amount}&txn=${transactionId}`;
-          },
-          prefill: {
-            name: name
-          },
-          theme: {
-            color: "#4caf50"
-          }
-        };
-
-        var rzp = new Razorpay(options);
-        rzp.open();
-      });
-    }
+  firebase.initializeApp({
+    apiKey: "AIzaSyC7U_eOl6LMVs_pNEaEBZB1ZKPvcNSaIc4",
+    authDomain: "crowdfundingdb.firebaseapp.com",
+    databaseURL: "https://crowdfundingdb-default-rtdb.firebaseio.com",
+    projectId: "crowdfundingdb",
+    storageBucket: "crowdfundingdb.appspot.com",
+    messagingSenderId: "309081360484",
+    appId: "1:309081360484:web:e1e3dd4d87c6cbacc93771"
   });
+  const database = firebase.database();
+
+  function updateStats(amount) {
+    return database.ref("stats").transaction(current => ({
+      donorCount: (current?.donorCount || 0) + 1,
+      totalAmount: (current?.totalAmount || 0) + amount
+    }));
+  }
+
+  function loadStats() {
+    database.ref("stats").on("value", snap => {
+      const data = snap.val() || {};
+      document.getElementById("donorNumber").textContent = data.donorCount || 0;
+      const total = data.totalAmount || 0;
+      document.getElementById("progressAmount").textContent = `₹${total.toLocaleString()}`;
+      const pct = Math.min((total / 250000) * 100, 100);
+      document.getElementById("progressBar").style.width = pct + "%";
+      // days left till June 1, 2025
+      const days = Math.max(0, Math.ceil((new Date("2025-06-01") - new Date()) / 86400000));
+      document.getElementById("daysLeft").textContent = days;
+    });
+  }
+
+  function saveDonor() {
+    const nameField = document.getElementById("donarName");
+    const amtField = document.getElementById("customAmount");
+    const btn = document.getElementById("donate-btn");
+
+    const name = nameField.value.trim();
+    const amount = parseInt(amtField.value, 10);
+    if (!name || isNaN(amount) || amount <= 0) {
+      return alert("कृपया नाम और राशि सही से भरें।");
+    }
+
+    btn.disabled = true;
+    btn.textContent = "प्रोसेस हो रहा है...";
+
+    new Razorpay({
+      key: "rzp_test_z8ywdL2wxflncA",
+      amount: amount * 100,
+      currency: "INR",
+      name: "दान अभियान",
+      handler(response) {
+        const txn = response.razorpay_payment_id;
+        database.ref("donors").push({ name, amount, txn, timestamp: Date.now() })
+          .then(() => updateStats(amount))
+          .then(() => window.location.href = 
+             `thankyou.html?name=${encodeURIComponent(name)}&amount=${amount}&txn=${txn}`)
+          .catch(err => {
+            console.error(err);
+            alert("कुछ गड़बड़ हुई। बाद में कोशिश करें।");
+            btn.disabled = false;
+            btn.textContent = "दान करें";
+          });
+      },
+      modal: {
+        ondismiss() {
+          btn.disabled = false;
+          btn.textContent = "दान करें";
+        }
+      },
+      prefill: { name },
+      theme: { color: "#4caf50" }
+    }).open();
+  }
+
+  document.getElementById("donate-btn").addEventListener("click", saveDonor);
+  window.addEventListener("load", loadStats);
+
 </script>
 </html>
