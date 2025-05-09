@@ -17,6 +17,9 @@
   <meta property="og:url" content="https://santu21sahu.github.io/ganesh-temple/">
   <meta property="og:type" content="website">
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -70,21 +73,13 @@
       font-style: italic;
       border-left: 5px solid #388e3c;
     }
-  .para3 {
-  background-color: #bbdefb;
-  color: #0d47a1;
-  text-decoration: underline;
-  border-left: 5px solid #1976d2;
-}
-@media (max-width: 480px) {
-  .para3 {
-    width: 100%;
-    font-size: 0.75rem;
-    white-space: nowrap;
-    overflow-x: auto;
-  }
-}
-  .para4 {
+    .para3 {
+      background-color: #bbdefb;
+      color: #0d47a1;
+      text-decoration: underline;
+      border-left: 5px solid #1976d2;
+    }
+    .para4 {
       background-color: #ffebee;
       color: #c2185b;
       font-weight: bold;
@@ -116,7 +111,7 @@
       display: flex;
       align-items: center;
       padding-left: 10px;
-      color: white;
+      color: dark green;
       font-weight: bold;
       font-size: 1rem;
       border-radius: 15px 0 0 15px;
@@ -275,9 +270,7 @@
 
     @media (max-width: 480px) {
   .container {
-    width: 100%;
-    border-radius: 0;
-    padding: 20px 10px;
+    padding: 15px;
   }
   .scroll-text {
     font-size: 1rem;
@@ -378,24 +371,24 @@ body {
     </div>
 
     <div class="amount-options" id="amountOptions">
-  <div class="amount-btn" data-amount="21">₹21</div>
+  <div class="amount-btn"  data-amount="21">₹21</div>
   <div class="amount-btn" data-amount="51">₹51</div>
-  <div class="amount-btn" data-amount="101">₹101</div>
+  <div class="amount-btn"  data-amount="101">₹101</div>
   <div class="amount-btn" id="otherBtn">अन्य राशि</div>
 </div>
 
 <div id="customAmountContainer">
 
   <input type="number" id="customAmount" class="input-box" placeholder="अपनी राशि दर्ज करें">
-<input type="text" id="donorName" class="input-box" placeholder="दानकर्ता का नाम" oninput="this.value = this.value.replace(/\d+/g, '');" />
+<input type="text" id="donarName" class="input-box" placeholder="दानकर्ता का नाम" oninput="this.value = this.value.replace(/\d+/g, '');"/>
 </div>
-
-
+   
     <div id="selectedAmountDisplay"></div>
 
-    <button id="donate-btn"><i class="fas fa-donate"></i> दान करें</button>
-  </div>
+   <button id="donate-btn" onclick="saveDonor()"> <i class="fas fa-donate"></i> दान करें
+</button>
 
+  </div>
 
 <footer class="site-footer">
   <div class="footer-container">
@@ -410,7 +403,8 @@ body {
     </div>
   </div>
 </footer>
-<!-- Razorpay checkout library -->
+
+ <!-- Razorpay checkout library -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
@@ -555,5 +549,7 @@ amountButtons.forEach(button => {
     loadStats();
   });
 </script>
-</body>
+
+
+ </body>
 </html>
