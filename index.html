@@ -411,129 +411,148 @@ body {
     </div>
   </div>
 </footer>
-</body>
+
 <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // ────────────────────────────────────────────────────────────────
+    // 1️⃣ Firebase init
+    // ────────────────────────────────────────────────────────────────
+    firebase.initializeApp({
+      apiKey: "AIzaSyC7U_eOl6LMVs_pNEaEBZB1ZKPvcNSaIc4",
+      authDomain: "crowdfundingdb.firebaseapp.com",
+      databaseURL: "https://crowdfundingdb-default-rtdb.firebaseio.com",
+      projectId: "crowdfundingdb",
+      storageBucket: "crowdfundingdb.firebasestorage.app",
+      messagingSenderId: "309081360484",
+      appId: "1:309081360484:web:e1e3dd4d87c6cbacc93771"
+    });
+    const database = firebase.database();
+
+    // ────────────────────────────────────────────────────────────────
+    // 2️⃣ Globals & element refs
+    // ────────────────────────────────────────────────────────────────
+    let selectedAmount = null;
+    const amountBtns            = document.querySelectorAll('.amount-btn[data-amount]');
+    const customAmountContainer = document.getElementById('customAmountContainer');
+    const customAmountInput     = document.getElementById('customAmount');
+    const otherBtn              = document.getElementById('otherBtn');
+    const donateBtn             = document.getElementById('donate-btn');
+    const donorNameInput        = document.getElementById('donarName');
+    const amountButtons = document.querySelectorAll('.amount-btn');
+ 
   
-// Get references to the buttons, input field, and container
-  const amountBtns = document.querySelectorAll('.amount-btn[data-amount]');
-  const customAmountContainer = document.getElementById('customAmountContainer');
-  const customAmountInput = document.getElementById('customAmount');
-  const otherBtn = document.getElementById('otherBtn');
 
-  // Handle clicks on predefined amount buttons (₹21, ₹511, ₹101)
-  amountBtns.forEach(btn => {
-    btn.addEventListener('click', function() {
-      // Remove the active class from all buttons
-      amountBtns.forEach(button => button.classList.remove('active-btn'));
+    // ────────────────────────────────────────────────────────────────
+    // 3️⃣ Predefined‐amount button clicks
+    // ────────────────────────────────────────────────────────────────
+   
+amountButtons.forEach(button => {
+    button.addEventListener('click', () => {  
+    amountButtons.forEach(btn => btn.classList.remove('selected'));
 
-      // Add the active class to the clicked button
-      this.classList.add('active-btn');
-      
-      // Get the selected amount from the button's data-amount attribute
-      const selectedAmount = this.getAttribute('data-amount');
-      
-      // Show the input field if it's hidden
-      customAmountContainer.style.display = 'block';
-
-      // Set the input value to the selected amount
-      customAmountInput.value = selectedAmount;
+      // Add 'selected' to clicked button
+      button.classList.add('selected');  
+      const amount = button.getAttribute('data-amount');
+      customAmountInput.value = amount; // Set clicked amount to input box
+      customAmountContainer.style.display = 'block'; // Show the input container
     });
   });
 
-  // Handle click on "अन्य राशि" (Other Amount)
-  otherBtn.addEventListener('click', function() {
-    // Remove the active class from all buttons
-    amountBtns.forEach(button => button.classList.remove('active-btn'));
-    
-    // Show the input field and clear any previous amount
-    customAmountContainer.style.display = 'block';
-    customAmountInput.value = '';  // Clear the input field for custom amount
+    // ────────────────────────────────────────────────────────────────
+    // 4️⃣ “अन्य राशि” (Other) button click
+    // ────────────────────────────────────────────────────────────────
+    otherBtn.addEventListener('click', () => {
+      amountBtns.forEach(b => b.classList.remove('selected'));
+      otherBtn.classList.add('selected');
 
-    // Add the active class to the "Other" button
-    this.classList.add('active-btn');
-  });
+      // clear & show custom
+      selectedAmount = null;
+      customAmountInput.value = '';
+      customAmountContainer.style.display = 'block';
+    });
 
-  function calculateDaysLeft() {
-    const today = new Date();
-    const targetDate = new Date('2025-05-14'); // Target: 20 May 2025
+    // ────────────────────────────────────────────────────────────────
+    // 5️⃣ Load & render stats
+    // ────────────────────────────────────────────────────────────────
+    function updateStats(amount) {
+      return database.ref("stats").transaction(curr => ({
+        donorCount:  (curr?.donorCount  || 0) + 1,
+        totalAmount: (curr?.totalAmount || 0) + amount
+      }));
+    }
 
-    // Difference in milliseconds
-    const diffTime = targetDate - today;
+    function loadStats() {
+      database.ref("stats").on("value", snap => {
+        const data = snap.val() || {};
+        document.getElementById("donorNumber").textContent   = data.donorCount  || 0;
+        const tot = data.totalAmount || 0;
+        document.getElementById("progressAmount").textContent = `₹${tot.toLocaleString()}`;
+        document.getElementById("progressBar").style.width    = `${Math.min((tot/250000)*100,100)}%`;
 
-    // Convert milliseconds to days
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    // Show result in the span
-    document.getElementById('daysLeft').textContent = diffDays;
-  }
-
-let totalAmountRaised = parseInt(localStorage.getItem("totalAmountRaised")) || 0;
-  let totalTargetAmount = 250000;
-  let totalDonors = parseInt(localStorage.getItem("totalDonors")) || 0;
-
-  function updateProgress() {
-    let progressPercentage = (totalAmountRaised / totalTargetAmount) * 100;
-
-    const progressBar = document.getElementById('progressBar');
-    const progressAmount = document.getElementById('progressAmount');
-    const donorCount = document.getElementById('donorNumber');
-
-    if (progressBar) progressBar.style.width = `${progressPercentage}%`;
-    if (progressAmount) progressAmount.textContent = `₹${totalAmountRaised.toLocaleString()}`;
-    if (donorCount) donorCount.textContent = totalDonors;
-  }
-
-  // Initial update on page load
-  updateProgress();
-
-  // Setup donate button handler after DOM is ready
-  document.addEventListener("DOMContentLoaded", function () {
-    calculateDaysLeft();
-
-    const donateBtn = document.getElementById("donate-btn");
-    if (donateBtn) {
-      donateBtn.addEventListener("click", function () {
-        const amount = parseInt(document.getElementById("customAmount").value);
-        const name = document.getElementById("donorName").value;
-
-        if (!amount || amount < 1) {
-          alert("कृपया मान्य राशि दर्ज करें।");
-          return;
-        }
-
-        var options = {
-          key: "rzp_test_z8ywdL2wxflncA",
-          amount: amount * 100,
-          currency: "INR",
-          name: "दान अभियान",
-          description: "यज्ञ हेतु दान",
-          handler: function (response) {
-            // ✅ Update totals
-            totalAmountRaised += amount;
-            totalDonors += 1;
-
-            // ✅ Save to localStorage
-            localStorage.setItem("totalAmountRaised", totalAmountRaised);
-            localStorage.setItem("totalDonors", totalDonors);
-
-            // ✅ Update UI
-            updateProgress();
-
-            const transactionId = response.razorpay_payment_id;
-            window.location.href = `thankyou.html?name=${encodeURIComponent(name)}&amount=${amount}&txn=${transactionId}`;
-          },
-          prefill: {
-            name: name
-          },
-          theme: {
-            color: "#4caf50"
-          }
-        };
-
-        var rzp = new Razorpay(options);
-        rzp.open();
+        const days = Math.max(0,
+          Math.ceil((new Date("2025-06-01") - new Date()) / (1000*60*60*24))
+        );
+        document.getElementById("daysLeft").textContent = days;
       });
     }
+
+    // ────────────────────────────────────────────────────────────────
+    // 6️⃣ Donation handler
+    // ────────────────────────────────────────────────────────────────
+    function saveDonor() {
+      const name = donorNameInput.value.trim();
+
+      // pick fixed or custom
+      let amount = selectedAmount;
+      if (amount === null) {
+        amount = parseInt(customAmountInput.value.trim(), 10);
+      }
+
+      if (!name || isNaN(amount) || amount <= 0) {
+        return alert("कृपया नाम और राशि सही से भरें।");
+      }
+
+      donateBtn.disabled = true;
+      donateBtn.textContent = "प्रोसेस हो रहा है...";
+
+      new Razorpay({
+        key: "rzp_test_z8ywdL2wxflncA",
+        amount: amount * 100,
+        currency: "INR",
+        name: "दान अभियान",
+        description: "यज्ञ हेतु दान",
+        handler(response) {
+          const txn = response.razorpay_payment_id;
+          database.ref("donors").push({ name, amount, txn, timestamp: Date.now() })
+            .then(() => updateStats(amount))
+            .then(() => {
+              window.location.href =
+                `thankyou.html?name=${encodeURIComponent(name)}&amount=${amount}&txn=${txn}`;
+            })
+            .catch(err => {
+              console.error(err);
+              alert("कुछ गड़बड़ हुई। बाद में कोशिश करें।");
+              donateBtn.disabled = false;
+              donateBtn.textContent = "दान करें";
+            });
+        },
+        modal: {
+          ondismiss() {
+            donateBtn.disabled = false;
+            donateBtn.textContent = "दान करें";
+          }
+        },
+        prefill: { name },
+        theme: { color: "#4caf50" }
+      }).open();
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    // 7️⃣ Bind & init
+    // ────────────────────────────────────────────────────────────────
+    donateBtn.addEventListener("click", saveDonor);
+    loadStats();
   });
 </script>
+</body>
 </html>
