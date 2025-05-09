@@ -387,7 +387,7 @@ body {
 <div id="customAmountContainer">
 
   <input type="number" id="customAmount" class="input-box" placeholder="अपनी राशि दर्ज करें">
-<input type="text" id="donorName" class="input-box" placeholder="दानकर्ता का नाम">
+<input type="text" id="donorName" class="input-box" placeholder="दानकर्ता का नाम" oninput="this.value = this.value.replace(/\d+/g, '');" />
 </div>
 
 
