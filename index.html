@@ -485,7 +485,7 @@ amountButtons.forEach(button => {
         document.getElementById("donorNumber").textContent   = data.donorCount  || 0;
         const tot = data.totalAmount || 0;
         document.getElementById("progressAmount").textContent = `₹${tot.toLocaleString()}`;
-        document.getElementById("progressBar").style.width    = `${Math.min((tot/250000)*100,100)}%`;
+        document.getElementById("progressBar").style.width    = `${Math.min((tot/10000)*100,100)}%`;
 
         const days = Math.max(0,
           Math.ceil((new Date("2025-05-20") - new Date()) / (1000*60*60*24))
